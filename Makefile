@@ -13,8 +13,8 @@ clean:
 proto:
 	cd proto && ./update.sh && cd ..
 
-startServer:
+server:
 	cd server && ./startserver.sh && cd ..
 
-startClient:
+client:
 	cd client && ./startclients.sh && cd ..

@@ -33,7 +33,7 @@ func (h *Hospital) SendAggregation(ctx context.Context, req *pb.Aggregation) (*p
 
 	if len(h.receivedShares) % 3 == 0 {
 		aggregatedShares := hospitalAggregateShares(h.receivedShares)
-		log.Printf("Total share sum: %d\n", aggregatedShares)
+		log.Printf("Total share sum: %d\n", aggregatedShares / (len(h.receivedShares) / 3))
 	}
 
 	return &pb.Acknowledge{
@@ -55,6 +55,7 @@ func runHospitalServer(hospital *Hospital) {
 		log.Fatalf("Failed to load TLS credentials: %v", err)
 	}
 
+	// Start a new gRPC server with the TLS credentials
 	grpcServer := grpc.NewServer(
 		grpc.Creds(tlsCredentials),
 	)

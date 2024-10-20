@@ -16,12 +16,12 @@ There are 2 ways to run the application:
 
 To start the server (from room-directory):
 ```
-make startServer
+make server
 ```
 
 To have the all the clients running in the same terminal. This will have the patients start with value 100, 200 and 300:
 ```
-make startClient
+make client
 ```
 
 To have all the clients run in a terminal of its own:
