@@ -1,10 +1,20 @@
-.PHONY: update cert
+.PHONY: proto cert startServer startClient clean
 
 cert:
-	cd cert && ./genkeys.sh && cd ..
+	cd cert && \
+	./genkey.sh && \
+	cd ..
 
 clean:
-	cd cert && rm *.pem && rm *.srl && cd ..
+	cd cert && \
+	rm *.pem ; rm *.srl && \
+	cd ..
 
-update:
-	./update.sh
+proto:
+	cd proto && ./update.sh && cd ..
+
+startServer:
+	cd server && ./startserver.sh && cd ..
+
+startClient:
+	cd client && ./startclients.sh && cd ..

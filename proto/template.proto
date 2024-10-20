@@ -1,0 +1,27 @@
+syntax = "proto3";
+package proto;
+option go_package = "grpc/proto";
+
+service ShareSendingService {
+    rpc SendShare(Share) returns (Acknowledge);
+}
+
+service AggregationSendingService {
+    rpc SendAggregation(Aggregation) returns (Acknowledge);
+}
+
+message Share {
+    int32 senderId = 1;
+    int32 share = 2;
+}
+
+message Acknowledge {
+    int32 receiverId = 1;
+    string message = 2;
+}
+
+message Aggregation {
+    int32 senderId = 1;
+    int32 aggregation = 2;
+}
+
