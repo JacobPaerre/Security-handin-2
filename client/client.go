@@ -2,21 +2,18 @@ package main
 
 import (
 	"context"
-	"crypto/tls"
-	"crypto/x509"
 	"flag"
 	"fmt"
 	"log"
 	"net"
-	"os"
 	"time"
+    "JacobPaerre/Security-handin-2/cert"
 
 	//"math/rand"
 
 	pb "JacobPaerre/Security-handin-2/proto"
 
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
 )
 
 
@@ -69,16 +66,17 @@ func (p *Patient) SendShare(ctx context.Context, req *pb.Share) (*pb.Acknowledge
         ReceiverId: int32(p.id),
         Message:    "Share received",
     }, nil
+
 }
 
 func sendSharesToOthers(peerAddress string, share int, senderId int) {
-    tlsServerCreds, err := loadCAcertificate("../cert/ca-cert.pem")
+    tlsServerCreds, err := cert.LoadCAcertificate("../cert/ca-cert.pem")
     if err != nil {
         log.Fatalf("Failed to load CA certificate: %v", err)
     }
 
     // Connect to the peer via gRPC
-    conn, err := grpc.Dial(peerAddress, grpc.WithTransportCredentials(tlsServerCreds)) // You can replace WithInsecure() with proper TLS credentials
+    conn, err := grpc.NewClient(peerAddress, grpc.WithTransportCredentials(tlsServerCreds)) // You can replace WithInsecure() with proper TLS credentials
     if err != nil {
         log.Fatalf("Failed to connect to peer: %v", err)
     }
@@ -95,7 +93,7 @@ func sendSharesToOthers(peerAddress string, share int, senderId int) {
 }
 
 func sendHospitalAggregation(hospitalAddress string, aggregation int, senderId int) {
-    tlsServerCreds, err := loadCAcertificate("../cert/ca-cert.pem")
+    tlsServerCreds, err := cert.LoadCAcertificate("../cert/ca-cert.pem")
     if err != nil {
         log.Fatalf("Failed to load CA certificate: %v", err)
     }
@@ -125,7 +123,7 @@ func runPatientServer(patient *Patient) {
     }
 
     // Load certificate
-    tlsCredentials, err := loadTLSCredentials(
+    tlsCredentials, err := cert.LoadTLSCredentials(
         fmt.Sprintf("%d-cert.pem", patient.id), 
         fmt.Sprintf("%d-key.pem", patient.id))
     
@@ -161,40 +159,6 @@ func handleShares(patient *Patient, generatedShares []int) {
         log.Printf("Patient %d aggregated value: %d\n", patient.id, aggregation)
         sendHospitalAggregation("localhost:3000", aggregation, patient.id)
     }
-}
-
-func loadCAcertificate(caCertPath string) (credentials.TransportCredentials, error) {
-    pemCA, err := os.ReadFile(caCertPath)
-    if err != nil {
-        return nil, fmt.Errorf("failed to read CA certificate: %v", err)
-    }
-
-    certPool := x509.NewCertPool()
-    if !certPool.AppendCertsFromPEM(pemCA) {
-        return nil, fmt.Errorf("failed to append CA certificate")
-    }
-
-    config := &tls.Config{
-        RootCAs: certPool,
-    }
-
-    return credentials.NewTLS(config), nil
-}
-
-func loadTLSCredentials(certPath, keyPath string) (credentials.TransportCredentials, error) {
-    // Load server's certificate and private key
-    serverCert, err := tls.LoadX509KeyPair(certPath, keyPath)
-    if err != nil {
-        return nil, err
-    }
-
-    // Create the credentials and return it
-    config := &tls.Config{
-        Certificates: []tls.Certificate{serverCert},
-        ClientAuth:   tls.NoClientCert,
-    }
-
-    return credentials.NewTLS(config), nil
 }
 
 func main() {
