@@ -30,7 +30,7 @@ func (h *Hospital) SendAggregation(ctx context.Context, req *pb.Aggregation) (*p
 	log.Printf("Share from %d: %d\n", req.SenderId, req.Aggregation)
 	h.receivedShares = append(h.receivedShares, int(req.Aggregation))
 
-	if len(h.receivedShares) == 3 {
+	if len(h.receivedShares) % 3 == 0 {
 		aggregatedShares := hospitalAggregateShares(h.receivedShares)
 		log.Printf("Total share sum: %d\n", aggregatedShares)
 	}
@@ -48,14 +48,9 @@ func runHospitalServer(hospital *Hospital) {
 		log.Fatalf("Failed to listen on %s: %v", hospital.hospitalAddress, err)
 	}
 
-	// Create a new gRPC server
 	grpcServer := grpc.NewServer()
-
-	// Register the hospital as the AggregationSendingService server
 	pb.RegisterAggregationSendingServiceServer(grpcServer, hospital)
-
 	log.Printf("Hospital server running at %s", hospital.hospitalAddress)
-	log.Printf("LETS GOOOO")
 
 	// Start serving incoming gRPC requests
 	if err := grpcServer.Serve(lis); err != nil {

@@ -1,14 +1,12 @@
 .PHONY: proto cert startServer startClient clean
 
 cert:
-	cd cert && \
-	./genkey.sh && \
-	cd ..
+	cd cert && ./generate_ca.sh && cd ..
 
 clean:
-	cd cert && \
-	rm *.pem ; rm *.srl && \
-	cd ..
+	cd cert && rm -f *.pem ; rm -f *.srl && cd .. && echo "Removed files in cert" && \
+	cd server && rm -f *.pem ; rm -f *.srl && cd .. && echo "Removed files in server" && \
+	cd client && rm -f *.pem ; rm -f *.srl && cd .. && echo "Removed files in client"
 
 proto:
 	cd proto && ./update.sh && cd ..
