@@ -1,4 +1,4 @@
-.PHONY: proto cert startServer startClient clean
+.PHONY: proto cert startServer startClient clean report
 
 cert:
 	cd cert && ./generate_ca.sh && cd .. && \
@@ -18,3 +18,8 @@ server:
 
 client:
 	cd client && ./startclients.sh && cd ..
+
+report:
+	cd report && rm -f report.pdf && \
+	pandoc -f markdown -t pdf report.md -o report.pdf && \
+	cd ..
