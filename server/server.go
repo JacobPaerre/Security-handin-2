@@ -2,12 +2,14 @@ package main
 
 import (
 	"context"
+	"crypto/tls"
 	"log"
 	"net"
 
 	pb "JacobPaerre/Security-handin-2/proto"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 )
 
 
@@ -48,7 +50,15 @@ func runHospitalServer(hospital *Hospital) {
 		log.Fatalf("Failed to listen on %s: %v", hospital.hospitalAddress, err)
 	}
 
-	grpcServer := grpc.NewServer()
+	// Load certificates
+	tlsCredentials, err := loadTLSCredentials("server-cert.pem", "server-key.pem")
+	if err != nil {
+		log.Fatalf("Failed to load TLS credentials: %v", err)
+	}
+
+	grpcServer := grpc.NewServer(
+		grpc.Creds(tlsCredentials),
+	)
 	pb.RegisterAggregationSendingServiceServer(grpcServer, hospital)
 	log.Printf("Hospital server running at %s", hospital.hospitalAddress)
 
@@ -56,6 +66,22 @@ func runHospitalServer(hospital *Hospital) {
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatalf("Failed to serve gRPC server over %s: %v", hospital.hospitalAddress, err)
 	}
+}
+
+func loadTLSCredentials(certPath, keyPath string) (credentials.TransportCredentials, error) {
+    // Load server's certificate and private key
+    serverCert, err := tls.LoadX509KeyPair(certPath, keyPath)
+    if err != nil {
+        return nil, err
+    }
+
+    // Create the credentials and return it
+    config := &tls.Config{
+        Certificates: []tls.Certificate{serverCert},
+        ClientAuth:   tls.NoClientCert,
+    }
+
+    return credentials.NewTLS(config), nil
 }
 
 func main() {
