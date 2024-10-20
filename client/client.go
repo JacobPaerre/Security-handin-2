@@ -9,7 +9,7 @@ import (
 	"time"
     "JacobPaerre/Security-handin-2/cert"
 
-	//"math/rand"
+	"math/rand"
 
 	pb "JacobPaerre/Security-handin-2/proto"
 
@@ -35,20 +35,10 @@ var (
 )
 
 func (p *Patient) generateShares() ([]int) {
-    /*x := 10//rand.Intn(p.initialValue)
-    y := 20//rand.Intn(p.initialValue - x)
+    x := rand.Intn(p.initialValue)
+    y := rand.Intn(p.initialValue - x)
     z := p.initialValue - x - y
-    return []int{x, y, z}*/
-	var shares []int
-    switch p.id {
-    case 0:
-        shares = []int{30, 40, 30} // Sum = 100
-    case 1:
-        shares = []int{50, 70, 80} // Sum = 200
-    case 2:
-        shares = []int{150, 100, 50} // Sum = 300
-    }
-    return shares
+    return []int{x, y, z}
 }
 
 func aggregateShares(receivedShares []int) int {
@@ -99,9 +89,9 @@ func sendHospitalAggregation(hospitalAddress string, aggregation int, senderId i
     }
 
     // Connect to the hospital via gRPC
-    conn, err := grpc.Dial(hospitalAddress, grpc.WithTransportCredentials(tlsServerCreds)) // You can replace WithInsecure() with proper TLS credentials
+    conn, err := grpc.NewClient(hospitalAddress, grpc.WithTransportCredentials(tlsServerCreds))
     if err != nil {
-        log.Fatalf("ERROR OH NO: %v", err)
+        log.Fatalf("Failed to connect to hospital: %v", err)
     }
     defer conn.Close()
 
@@ -163,14 +153,14 @@ func handleShares(patient *Patient, generatedShares []int) {
 
 func main() {
 	patientID := flag.Int("id", -1, "The patients ID")
-    initialValue := 100 // flag.Int("init_val", -1, "The initial value")
+    initialValue := flag.Int("val", -1, "The initial value")
     flag.Parse()
 
     port := 3001 + *patientID
 
     patient := &Patient{
         id:                 *patientID,
-        initialValue:       initialValue,
+        initialValue:       *initialValue,
         patientAddress:     fmt.Sprintf("localhost:%d", port),
         localShare:         0,
         receivedShares:     []int{},
