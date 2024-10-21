@@ -1,13 +1,13 @@
 package main
 
 import (
+	"JacobPaerre/Security-handin-2/cert"
 	"context"
 	"flag"
 	"fmt"
 	"log"
 	"net"
 	"time"
-    "JacobPaerre/Security-handin-2/cert"
 
 	"math/rand"
 
@@ -19,11 +19,11 @@ import (
 
 type Patient struct {
 	pb.UnimplementedShareSendingServiceServer
-	id					int
+	id                  int
     initialValue        int
-	patientAddress		string
-	localShare			int
-	receivedShares		[]int
+	patientAddress      string
+	localShare          int
+	receivedShares      []int
 }
 
 var (
