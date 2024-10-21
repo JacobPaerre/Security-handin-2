@@ -1,10 +1,10 @@
 package main
 
 import (
+	"JacobPaerre/Security-handin-2/cert"
 	"context"
 	"log"
 	"net"
-	"JacobPaerre/Security-handin-2/cert"
 
 	pb "JacobPaerre/Security-handin-2/proto"
 
@@ -14,9 +14,9 @@ import (
 
 type Hospital struct {
 	pb.UnimplementedAggregationSendingServiceServer
-	id              int
-	hospitalAddress string
-	receivedShares  []int
+	id				int
+	hospitalAddress	string
+	receivedShares	[]int
 }
 
 func hospitalAggregateShares(receivedShares []int) int {
