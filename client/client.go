@@ -18,12 +18,12 @@ import (
 
 
 type Patient struct {
-	pb.UnimplementedShareSendingServiceServer
-	id                  int
+    pb.UnimplementedShareSendingServiceServer
+    id                  int
     initialValue        int
-	patientAddress      string
-	localShare          int
-	receivedShares      []int
+    patientAddress      string
+    localShare          int
+    receivedShares      []int
 }
 
 var (
