@@ -27,14 +27,18 @@ Describe the adversarial model you are working on (1), describing the building b
 
 We are looking at a passive adversary. Passive adversaries primarily focus on gathering information compared to an active adversary that would try to bring down a system. You could say that passive adversaries are purely educational, and passive attacks could be used to prepare for a much larger active attack.
 
+Also a Dolev-Yao attack is possible, where someone can intercept, modify or inject packets sent over the internet.
+
 ## (2) Describe the buildings blocks of your proposed solution and how they are combined in the solution:
 
 I have used TLS and Secret Sharing. Secret Sharing is used when the data has to be transferred between the clients and when sending the data to the server. Secret Sharing helps with not revealing what the value of a person actually is - unless the person has been compromised. In the end the server gets shares sent from the clients that in the end sums up to the aggregated value of the clients.
 
-I use TLS to secure the connection between client and client, and client and server. TLS helps with authentication of the receiver, encryption of data sent through the connection, and for securing data integrity.
+TLS is used to secure the connections between clients and between clients and the server. TLS provides authentication of the receiver, encryption of data sent through the connection, and ensures data integrity.
 
-They are combined in the solution by having every connection be through a TLS-secured connection, and having the values sent through the connections be with Secret Sharing.
+These techniques are combined in the solution by ensuring that every connection is secured with TLS, and the values sent through these connections are protected using Secret Sharing.
 
 ## (3) How does the final solution guarantee security against the adversary described?:
 
-_missing_
+By using Secret Sharing clients only distribute partial, unusable pieces of their _secret value_. Having a passive adversary that cannot gather enough of these pieces will not be able to learn what the original _secret value_.
+
+TLS secures us against Dolev-Yao attacks because TLS authenticates, encrypts and guarantees data integrity. It does this by first having a handshake phase, where the client has to trust the server it tries to connect to. It does this by getting the TLS certificate from the server and verifies it using the public key-protocol. When this is verified, a **shared secret key** will then be established by server and client, and this **shared secret key** will be used to encrypt and decrypt data sent.
