@@ -29,7 +29,11 @@ We are looking at a passive adversary. Passive adversaries primarily focus on ga
 
 ## (2) Describe the buildings blocks of your proposed solution and how they are combined in the solution:
 
-I have used TLS and Secret Sharing. _missing_
+I have used TLS and Secret Sharing. Secret Sharing is used when the data has to be transferred between the clients and when sending the data to the server. Secret Sharing helps with not revealing what the value of a person actually is - unless the person has been compromised. In the end the server gets shares sent from the clients that in the end sums up to the aggregated value of the clients.
+
+I use TLS to secure the connection between client and client, and client and server. TLS helps with authentication of the receiver, encryption of data sent through the connection, and for securing data integrity.
+
+They are combined in the solution by having every connection be through a TLS-secured connection, and having the values sent through the connections be with Secret Sharing.
 
 ## (3) How does the final solution guarantee security against the adversary described?:
 

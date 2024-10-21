@@ -1,4 +1,4 @@
-.PHONY: proto cert startServer startClient clean report
+.PHONY: proto cert server client clean report
 
 cert:
 	cd cert && ./generate_ca.sh && cd .. && \
